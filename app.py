@@ -1,4 +1,8 @@
 from flask import Flask, jsonify, request
+from pydantic import ValidationError
+from repository import get_all_employees, create_employee
+from schemas import EmployeeCreate
+
 app = Flask(__name__)
 
 users = [
@@ -132,6 +136,37 @@ def transaction_history(account_id):
 
     account_transactions = [t for t in transactions if t['accountId'] == account_id]
     return jsonify(account_transactions), 200
+
+@app.route("/employees", methods=["GET"])
+def get_employees():
+    try:
+        employees = get_all_employees()
+        return jsonify([{
+            "id": e.id,
+            "name": e.name,
+            "department": e.department,
+            "salary": float(e.salary)
+        } for e in employees])
+    except Exception as ex:
+        return jsonify({"error": "Unable to fetch employees", "detail": str(ex)}), 500
+
+@app.route("/employees", methods=["POST"])
+def add_employee():
+    payload = request.json or {}
+    try:
+        employee_data = EmployeeCreate(**payload)
+    except ValidationError as err:
+        return jsonify({"error": "Invalid payload", "detail": err.errors()}), 400
+
+    try:
+        emp = create_employee(
+            employee_data.name,
+            employee_data.department,
+            employee_data.salary,
+        )
+        return jsonify({"id": emp.id}), 201
+    except Exception as ex:
+        return jsonify({"error": "Failed to create employee", "detail": str(ex)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)
