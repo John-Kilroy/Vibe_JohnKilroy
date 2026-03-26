@@ -1,8 +1,15 @@
 // src/api/bankApi.js  –  Centralised fetch helpers
 // MongoDB IDs are 24-char hex strings (ObjectId), not integers.
-// They are returned from the API and used directly in URLs.
 
 const BASE = '/api/accounts';
+
+function getHeaders() {
+  const token = localStorage.getItem('nb_token');
+  return {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+}
 
 async function handleResponse(res) {
   const data = await res.json();
@@ -13,26 +20,26 @@ async function handleResponse(res) {
 export const createAccount = (name, email, accountType) =>
   fetch(`${BASE}/`, {
     method : 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body   : JSON.stringify({ name, email, account_type: accountType }),
   }).then(handleResponse);
 
 export const getAccount = (id) =>
-  fetch(`${BASE}/${id}`).then(handleResponse);
+  fetch(`${BASE}/${id}`, { headers: getHeaders() }).then(handleResponse);
 
 export const deposit = (id, amount) =>
   fetch(`${BASE}/${id}/deposit`, {
     method : 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body   : JSON.stringify({ amount }),
   }).then(handleResponse);
 
 export const withdraw = (id, amount) =>
   fetch(`${BASE}/${id}/withdraw`, {
     method : 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: getHeaders(),
     body   : JSON.stringify({ amount }),
   }).then(handleResponse);
 
 export const getTransactions = (id) =>
-  fetch(`${BASE}/${id}/transactions`).then(handleResponse);
+  fetch(`${BASE}/${id}/transactions`, { headers: getHeaders() }).then(handleResponse);

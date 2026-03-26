@@ -36,6 +36,20 @@ class AccountService:
             "email":     s_user["email"],
         }
 
+    # ── Create account for an already-authenticated user ──────
+    def create_account_for_user(self, user_id: str, account_type: str) -> dict:
+        if account_type not in ("SAVINGS", "CHECKING", "FIXED_DEPOSIT"):
+            raise ValueError("account_type must be SAVINGS, CHECKING, or FIXED_DEPOSIT.")
+
+        user = user_repository.find_by_id(user_id)
+        if not user:
+            raise LookupError(f"User {user_id} not found.")
+
+        account   = account_repository.create(user_id, account_type)
+        s_user    = serialize_user(user)
+        s_account = serialize_account(account)
+        return {**s_account, "user_name": s_user["name"], "email": s_user["email"]}
+
     # ── Get account details ───────────────────────────────────
     def get_account(self, account_id: str) -> dict:
         account = account_repository.find_by_id(account_id)

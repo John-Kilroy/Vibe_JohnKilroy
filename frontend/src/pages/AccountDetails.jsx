@@ -2,11 +2,16 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams, useLocation } from 'react-router-dom';
 import { getAccount } from '../api/bankApi';
+import { useAuth } from '../context/AuthContext';
 
 export default function AccountDetails() {
   const { id }   = useParams();
   const navigate = useNavigate();
   const location = useLocation();
+  const { user } = useAuth();
+
+  const backPath  = user?.role === 'admin' ? '/admin/customers' : '/dashboard';
+  const backLabel = user?.role === 'admin' ? '← Customers'     : '← My Accounts';
 
   const [account, setAccount] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -27,7 +32,7 @@ export default function AccountDetails() {
 
   return (
     <div className="page">
-      <button className="back-link" onClick={() => navigate('/')}>← Home</button>
+      <button className="back-link" onClick={() => navigate(backPath)}>{backLabel}</button>
       <div className="brand"><div className="brand__logo">NovaBanc</div></div>
 
       <div className="card">
