@@ -17,6 +17,10 @@ export default function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!/^[a-zA-Z0-9]{6,}$/.test(password)) {
+      setError('Password must be at least 6 alphanumeric characters (letters and numbers only).');
+      return;
+    }
     setLoading(true);
     try {
       const { token, user } = await apiRegister(name, email, password);

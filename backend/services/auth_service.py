@@ -1,8 +1,11 @@
 # services/auth_service.py  –  Registration and login
+import re
 import bcrypt
 from repositories.user_repository import user_repository
 from models.serializers import serialize_user
 from utils.auth import create_token
+
+_ALPHANUMERIC = re.compile(r'^[a-zA-Z0-9]+$')
 
 
 class AuthService:
@@ -14,6 +17,8 @@ class AuthService:
             raise ValueError("Email is required.")
         if not password or len(password) < 6:
             raise ValueError("Password must be at least 6 characters.")
+        if not _ALPHANUMERIC.match(password):
+            raise ValueError("Password must contain only letters and numbers.")
 
         if user_repository.find_by_email(email.strip()):
             raise ValueError("An account with this email already exists.")
