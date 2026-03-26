@@ -94,6 +94,7 @@ select option { background: var(--navy-mid); }
 .btn--ghost { background: rgba(201,168,76,0.08); color: var(--gold-lt); border: 1px solid rgba(201,168,76,0.2); }
 
 .btn-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+.btn--danger { background: rgba(192,57,43,0.18); color: #e88; border: 1px solid rgba(192,57,43,0.4); }
 
 .back-link {
   background: none; border: none; color: var(--muted); cursor: pointer;

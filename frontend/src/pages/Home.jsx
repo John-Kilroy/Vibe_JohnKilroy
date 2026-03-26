@@ -1,9 +1,18 @@
 // src/pages/Home.jsx
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';
 
 export default function Home() {
   const navigate = useNavigate();
+  const { user, ready } = useAuth();
+
+  // Redirect logged-in users to their dashboard
+  useEffect(() => {
+    if (ready && user) {
+      navigate(user.role === 'admin' ? '/admin' : '/dashboard', { replace: true });
+    }
+  }, [ready, user, navigate]);
 
   return (
     <div className="page">
@@ -18,14 +27,14 @@ export default function Home() {
       <div className="card">
         <h1 className="section-title">Welcome</h1>
         <p style={{ color: 'var(--muted)', marginBottom: '28px', fontSize: '0.9rem' }}>
-          Manage your accounts, deposits, withdrawals, and transaction history — all in one place.
+          Sign in to manage your accounts, or create a new account to get started.
         </p>
         <div className="home-cta">
-          <button className="btn btn--primary" onClick={() => navigate('/create-account')}>
-            ✦ Create New Account
+          <button className="btn btn--primary" onClick={() => navigate('/login')}>
+            Sign In
           </button>
-          <button className="btn btn--ghost" onClick={() => navigate('/view-account')}>
-            View Existing Account
+          <button className="btn btn--ghost" onClick={() => navigate('/register')}>
+            Create Account
           </button>
         </div>
       </div>

@@ -6,6 +6,7 @@ Run once after starting MongoDB:
 from datetime import datetime, timezone
 from pymongo import MongoClient
 from dotenv import load_dotenv
+import bcrypt
 import os
 
 load_dotenv()
@@ -18,17 +19,30 @@ db.users.drop()
 db.accounts.drop()
 db.transactions.drop()
 
-# ── Seed users ────────────────────────────────────────────────
+# ── Seed admin user ───────────────────────────────────────────
+admin_id = db.users.insert_one({
+    "name":          "Admin",
+    "email":         "admin@novabanc.com",
+    "password_hash": bcrypt.hashpw(b"admin123", bcrypt.gensalt()).decode(),
+    "role":          "admin",
+    "created_at":    datetime.now(timezone.utc),
+}).inserted_id
+
+# ── Seed customer users ────────────────────────────────────────
 alice_id = db.users.insert_one({
-    "name":       "Alice Johnson",
-    "email":      "alice@example.com",
-    "created_at": datetime.now(timezone.utc),
+    "name":          "Alice Johnson",
+    "email":         "alice@example.com",
+    "password_hash": bcrypt.hashpw(b"alice123", bcrypt.gensalt()).decode(),
+    "role":          "customer",
+    "created_at":    datetime.now(timezone.utc),
 }).inserted_id
 
 bob_id = db.users.insert_one({
-    "name":       "Bob Smith",
-    "email":      "bob@example.com",
-    "created_at": datetime.now(timezone.utc),
+    "name":          "Bob Smith",
+    "email":         "bob@example.com",
+    "password_hash": bcrypt.hashpw(b"bob12345", bcrypt.gensalt()).decode(),
+    "role":          "customer",
+    "created_at":    datetime.now(timezone.utc),
 }).inserted_id
 
 # ── Seed accounts ─────────────────────────────────────────────
@@ -68,6 +82,15 @@ db.transactions.insert_many([
     },
 ])
 
-print("✅  Seeded: 2 users, 2 accounts, 3 transactions")
-print(f"   Alice account ID : {alice_acc_id}")
-print(f"   Bob   account ID : {bob_acc_id}")
+print("Seeded successfully!")
+print()
+print("Admin login:")
+print("  Email   : admin@novabanc.com")
+print("  Password: admin123")
+print()
+print("Customer logins:")
+print("  alice@example.com / alice123")
+print("  bob@example.com   / bob12345")
+print()
+print(f"Alice account ID: {alice_acc_id}")
+print(f"Bob   account ID: {bob_acc_id}")

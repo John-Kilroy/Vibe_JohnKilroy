@@ -17,6 +17,7 @@ def serialize_user(doc: dict) -> dict:
         "user_id":    _str(doc["_id"]),
         "name":       doc["name"],
         "email":      doc["email"],
+        "role":       doc.get("role", "customer"),
         "created_at": doc.get("created_at", datetime.utcnow()).isoformat(),
     }
 

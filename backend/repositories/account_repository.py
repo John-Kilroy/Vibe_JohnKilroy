@@ -29,5 +29,19 @@ class AccountRepository:
         )
         return self.find_by_id(account_id)
 
+    def update(self, account_id: str, data: dict) -> dict | None:
+        accounts_col.update_one({"_id": ObjectId(account_id)}, {"$set": data})
+        return self.find_by_id(account_id)
+
+    def delete(self, account_id: str) -> None:
+        accounts_col.delete_one({"_id": ObjectId(account_id)})
+
+    def delete_by_user_id(self, user_id: str) -> None:
+        accounts_col.delete_many({"user_id": ObjectId(user_id)})
+
+    def get_account_ids_for_user(self, user_id: str) -> list[str]:
+        docs = accounts_col.find({"user_id": ObjectId(user_id)}, {"_id": 1})
+        return [str(d["_id"]) for d in docs]
+
 
 account_repository = AccountRepository()

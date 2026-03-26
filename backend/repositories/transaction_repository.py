@@ -23,5 +23,8 @@ class TransactionRepository:
             ).sort("created_at", -1)     # newest first
         )
 
+    def delete_by_account_id(self, account_id: str) -> None:
+        transactions_col.delete_many({"account_id": ObjectId(account_id)})
+
 
 transaction_repository = TransactionRepository()
