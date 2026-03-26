@@ -1,13 +1,13 @@
 {
   "info": {
-    "name": "Simple Bank API (Python / FastAPI)",
-    "_postman_id": "banking-app-python-collection-v1",
-    "description": "All endpoints for the Simple Banking Application — FastAPI backend on port 8000. Swagger UI available at http://localhost:8000/docs",
+    "name": "Simple Bank API (Flask + MongoDB)",
+    "_postman_id": "banking-app-flask-mongo-v1",
+    "description": "All endpoints for the Simple Banking Application.\nBackend: Python Flask on port 5000.\nDatabase: MongoDB (ObjectId strings as IDs).\n\nIMPORTANT: After calling 'Create Account', copy the returned account_id (24-char hex) into the 'account_id' collection variable before calling other endpoints.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "variable": [
-    { "key": "base_url",   "value": "http://localhost:8000" },
-    { "key": "account_id", "value": "1" }
+    { "key": "base_url",   "value": "http://localhost:5000" },
+    { "key": "account_id", "value": "PASTE_ACCOUNT_ID_HERE" }
   ],
   "item": [
     {
@@ -35,8 +35,7 @@
         "method": "GET",
         "url": {
           "raw": "{{base_url}}/api/accounts/{{account_id}}",
-          "host": ["{{base_url}}"],
-          "path": ["api","accounts","{{account_id}}"]
+          "host": ["{{base_url}}"], "path": ["api","accounts","{{account_id}}"]
         }
       }
     },
@@ -47,8 +46,7 @@
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "url": {
           "raw": "{{base_url}}/api/accounts/{{account_id}}/deposit",
-          "host": ["{{base_url}}"],
-          "path": ["api","accounts","{{account_id}}","deposit"]
+          "host": ["{{base_url}}"], "path": ["api","accounts","{{account_id}}","deposit"]
         },
         "body": { "mode": "raw", "raw": "{\n  \"amount\": 500\n}" }
       }
@@ -60,8 +58,7 @@
         "header": [{ "key": "Content-Type", "value": "application/json" }],
         "url": {
           "raw": "{{base_url}}/api/accounts/{{account_id}}/withdraw",
-          "host": ["{{base_url}}"],
-          "path": ["api","accounts","{{account_id}}","withdraw"]
+          "host": ["{{base_url}}"], "path": ["api","accounts","{{account_id}}","withdraw"]
         },
         "body": { "mode": "raw", "raw": "{\n  \"amount\": 200\n}" }
       }
@@ -72,8 +69,7 @@
         "method": "GET",
         "url": {
           "raw": "{{base_url}}/api/accounts/{{account_id}}/transactions",
-          "host": ["{{base_url}}"],
-          "path": ["api","accounts","{{account_id}}","transactions"]
+          "host": ["{{base_url}}"], "path": ["api","accounts","{{account_id}}","transactions"]
         }
       }
     }

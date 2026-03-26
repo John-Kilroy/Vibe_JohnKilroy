@@ -1,6 +1,4 @@
 /* src/App.css  –  Global styles & design tokens */
-
-/* ── Google Fonts are loaded in index.html ─────── */
 :root {
   --navy    : #0d1b2a;
   --navy-mid: #162436;
@@ -30,7 +28,6 @@ body {
   min-height: 100vh;
 }
 
-/* ── Layout ───────────────────────────────────── */
 .page {
   min-height: 100vh;
   display: flex;
@@ -51,31 +48,10 @@ body {
 
 .card--wide { max-width: 720px; }
 
-/* ── Brand header ─────────────────────────────── */
-.brand {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 40px;
-}
+.brand { display: flex; flex-direction: column; align-items: center; gap: 6px; margin-bottom: 40px; }
+.brand__logo { font-family: var(--font-display); font-size: 2.6rem; font-weight: 600; color: var(--gold); letter-spacing: 0.04em; }
+.brand__tagline { font-size: 0.75rem; letter-spacing: 0.22em; text-transform: uppercase; color: var(--muted); }
 
-.brand__logo {
-  font-family: var(--font-display);
-  font-size: 2.6rem;
-  font-weight: 600;
-  color: var(--gold);
-  letter-spacing: 0.04em;
-}
-
-.brand__tagline {
-  font-size: 0.75rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
-/* ── Section title ────────────────────────────── */
 .section-title {
   font-family: var(--font-display);
   font-size: 1.6rem;
@@ -86,20 +62,9 @@ body {
   padding-bottom: 12px;
 }
 
-/* ── Form elements ────────────────────────────── */
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 20px;
-}
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px; }
 
-label {
-  font-size: 0.72rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
+label { font-size: 0.72rem; letter-spacing: 0.18em; text-transform: uppercase; color: var(--muted); }
 
 input, select {
   background: var(--navy-lt);
@@ -112,166 +77,61 @@ input, select {
   transition: border-color 0.2s;
   width: 100%;
 }
-
-input:focus, select:focus {
-  border-color: var(--gold);
-  outline: none;
-}
-
+input:focus, select:focus { border-color: var(--gold); outline: none; }
 select option { background: var(--navy-mid); }
 
-/* ── Buttons ──────────────────────────────────── */
 .btn {
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 0.82rem;
-  font-weight: 500;
-  letter-spacing: 0.14em;
-  padding: 12px 22px;
-  text-transform: uppercase;
+  border: none; border-radius: 6px; cursor: pointer;
+  font-family: var(--font-body); font-size: 0.82rem; font-weight: 500;
+  letter-spacing: 0.14em; padding: 12px 22px; text-transform: uppercase;
   transition: opacity 0.2s, transform 0.15s;
 }
-.btn:hover   { opacity: 0.88; }
-.btn:active  { transform: scale(0.97); }
+.btn:hover { opacity: 0.88; }
+.btn:active { transform: scale(0.97); }
 .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+.btn--primary { background: var(--gold); color: var(--navy); width: 100%; margin-top: 8px; }
+.btn--secondary { background: transparent; border: 1px solid var(--gold); color: var(--gold); }
+.btn--ghost { background: rgba(201,168,76,0.08); color: var(--gold-lt); border: 1px solid rgba(201,168,76,0.2); }
 
-.btn--primary {
-  background: var(--gold);
-  color: var(--navy);
-  width: 100%;
-  margin-top: 8px;
-}
+.btn-row { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
 
-.btn--secondary {
-  background: transparent;
-  border: 1px solid var(--gold);
-  color: var(--gold);
-}
-
-.btn--ghost {
-  background: rgba(201,168,76,0.08);
-  color: var(--gold-lt);
-  border: 1px solid rgba(201,168,76,0.2);
-}
-
-.btn-row {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
-  flex-wrap: wrap;
-}
-
-/* ── Back link ────────────────────────────────── */
 .back-link {
-  background: none;
-  border: none;
-  color: var(--muted);
-  cursor: pointer;
-  font-family: var(--font-body);
-  font-size: 0.8rem;
-  letter-spacing: 0.12em;
-  margin-bottom: 28px;
-  padding: 0;
-  text-transform: uppercase;
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: color 0.2s;
+  background: none; border: none; color: var(--muted); cursor: pointer;
+  font-family: var(--font-body); font-size: 0.8rem; letter-spacing: 0.12em;
+  margin-bottom: 28px; padding: 0; text-transform: uppercase;
+  display: inline-flex; align-items: center; gap: 6px; transition: color 0.2s;
 }
 .back-link:hover { color: var(--gold); }
 
-/* ── Alert / status ───────────────────────────── */
-.alert {
-  border-radius: 6px;
-  font-size: 0.88rem;
-  padding: 12px 16px;
-  margin-bottom: 20px;
-}
+.alert { border-radius: 6px; font-size: 0.88rem; padding: 12px 16px; margin-bottom: 20px; }
 .alert--error   { background: rgba(192,57,43,0.15); border: 1px solid rgba(192,57,43,0.4); color: #e88; }
 .alert--success { background: rgba(39,174,96,0.12);  border: 1px solid rgba(39,174,96,0.35); color: #7e8; }
 
-/* ── Account detail row ───────────────────────── */
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  padding: 12px 0;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-}
+.detail-row { display: flex; justify-content: space-between; align-items: baseline; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
 .detail-row:last-child { border-bottom: none; }
 .detail-row__label { color: var(--muted); font-size: 0.8rem; letter-spacing: 0.1em; text-transform: uppercase; }
 .detail-row__value { color: var(--cream); font-size: 1rem; }
-.detail-row__value--balance {
-  font-family: var(--font-display);
-  font-size: 1.8rem;
-  color: var(--gold);
-}
+.detail-row__value--balance { font-family: var(--font-display); font-size: 1.8rem; color: var(--gold); }
 
-/* ── Transaction table ────────────────────────── */
-.txn-table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 0.88rem;
-}
-.txn-table th {
-  text-align: left;
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding: 0 10px 12px;
-}
-.txn-table td {
-  padding: 13px 10px;
-  border-top: 1px solid rgba(255,255,255,0.04);
-}
+.txn-table { width: 100%; border-collapse: collapse; font-size: 0.88rem; }
+.txn-table th { text-align: left; font-size: 0.7rem; letter-spacing: 0.16em; text-transform: uppercase; color: var(--muted); padding: 0 10px 12px; }
+.txn-table td { padding: 13px 10px; border-top: 1px solid rgba(255,255,255,0.04); }
 .txn-table tr:hover td { background: rgba(255,255,255,0.025); }
 
-.badge {
-  display: inline-block;
-  border-radius: 30px;
-  font-size: 0.7rem;
-  letter-spacing: 0.1em;
-  padding: 3px 10px;
-  text-transform: uppercase;
-  font-weight: 500;
-}
+.badge { display: inline-block; border-radius: 30px; font-size: 0.7rem; letter-spacing: 0.1em; padding: 3px 10px; text-transform: uppercase; font-weight: 500; }
 .badge--deposit    { background: rgba(39,174,96,0.15);  color: #6dd; border: 1px solid rgba(39,174,96,0.3); }
 .badge--withdrawal { background: rgba(192,57,43,0.15); color: #f99; border: 1px solid rgba(192,57,43,0.3); }
-
 .amount--deposit    { color: var(--green); }
 .amount--withdrawal { color: #e88; }
 
-/* ── Home hero ────────────────────────────────── */
 .home-hero { text-align: center; margin-bottom: 48px; }
-.home-hero__title {
-  font-family: var(--font-display);
-  font-size: 3.2rem;
-  font-weight: 300;
-  color: var(--cream);
-  line-height: 1.15;
-}
-.home-hero__subtitle {
-  font-size: 0.85rem;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: var(--muted);
-  margin-top: 10px;
-}
-.home-hero__divider {
-  width: 48px;
-  height: 1px;
-  background: var(--gold);
-  margin: 18px auto 0;
-}
+.home-hero__title { font-family: var(--font-display); font-size: 3.2rem; font-weight: 300; color: var(--cream); line-height: 1.15; }
+.home-hero__divider { width: 48px; height: 1px; background: var(--gold); margin: 18px auto 0; }
 
 .home-cta { display: flex; flex-direction: column; gap: 14px; }
 
-/* ── Loading spinner ─────────────────────────── */
 .spinner-wrap { text-align: center; padding: 30px 0; color: var(--muted); font-size: 0.85rem; letter-spacing: 0.12em; text-transform: uppercase; }
+.empty-state  { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.9rem; }
 
-/* ── Empty state ──────────────────────────────── */
-.empty-state { text-align: center; padding: 40px 0; color: var(--muted); font-size: 0.9rem; }
+/* MongoDB ID display (mono so it's readable) */
+.mono { font-family: 'Courier New', monospace; font-size: 0.8rem; color: var(--muted); word-break: break-all; }

@@ -1,109 +1,110 @@
-# controllers/account_controller.py  –  REST layer (FastAPI Router)
-from fastapi import APIRouter
-from models.schemas import (
-    CreateAccountRequest,
-    CreateAccountForUserRequest,
-    AmountRequest,
-    UpdateAccountRequest,
-    AccountResponse,
-    AccountListResponse,
-    TransactionResponse,
-    OperationResponse,
-)
+# controllers/account_controller.py  –  Flask Blueprint (REST layer)
+from flask import Blueprint, request, jsonify
+from bson.errors import InvalidId
 from services.account_service import account_service
 
-router = APIRouter(prefix="/api/accounts", tags=["Accounts"])
+account_bp = Blueprint("accounts", __name__, url_prefix="/api/accounts")
+
+
+# ── Error helpers ─────────────────────────────────────────────
+def _bad_request(msg: str):
+    return jsonify({"error": msg}), 400
+
+def _not_found(msg: str):
+    return jsonify({"error": msg}), 404
+
+def _unprocessable(msg: str):
+    return jsonify({"error": msg}), 422
+
+def _server_error(msg: str):
+    return jsonify({"error": msg}), 500
 
 
 # ── POST /api/accounts  –  Create account ────────────────────
-@router.post(
-    "/",
-    response_model=AccountResponse,
-    status_code=201,
-    summary="Create a new bank account",
-)
-def create_account(body: CreateAccountRequest):
-    return account_service.create_account(body.name, body.email, body.account_type)
+@account_bp.post("/")
+def create_account():
+    body = request.get_json(silent=True) or {}
+    name         = body.get("name", "").strip()
+    email        = body.get("email", "").strip()
+    account_type = body.get("account_type", "").strip().upper()
+
+    if not name or not email or not account_type:
+        return _bad_request("name, email, and account_type are required.")
+
+    try:
+        result = account_service.create_account(name, email, account_type)
+        return jsonify(result), 201
+    except ValueError as e:
+        return _bad_request(str(e))
+    except Exception as e:
+        return _server_error(str(e))
 
 
-# ── POST /api/accounts/create-for-user/{user_id}  –  Create account for user ──────
-@router.post(
-    "/create-for-user/{user_id}",
-    response_model=AccountResponse,
-    status_code=201,
-    summary="Create a new account for authenticated user",
-)
-def create_account_for_user(user_id: int, body: CreateAccountForUserRequest):
-    return account_service.create_account_for_user(user_id, body.account_type)
+# ── GET /api/accounts/<id>  –  Get account details ───────────
+@account_bp.get("/<account_id>")
+def get_account(account_id: str):
+    try:
+        result = account_service.get_account(account_id)
+        return jsonify(result)
+    except (LookupError, InvalidId):
+        return _not_found(f"Account {account_id} not found.")
+    except Exception as e:
+        return _server_error(str(e))
 
 
-# ── GET /api/accounts/user/{user_id}  –  List user accounts ──
-# NOTE: This must come BEFORE the /{account_id} route to avoid conflicts
-@router.get(
-    "/user/{user_id}",
-    response_model=list[AccountListResponse],
-    summary="Get all accounts for a user",
-)
-def get_user_accounts(user_id: int):
-    return account_service.get_user_accounts(user_id)
+# ── POST /api/accounts/<id>/deposit  –  Deposit money ────────
+@account_bp.post("/<account_id>/deposit")
+def deposit(account_id: str):
+    body   = request.get_json(silent=True) or {}
+    amount = body.get("amount")
+
+    try:
+        amount = float(amount)
+    except (TypeError, ValueError):
+        return _bad_request("amount must be a number.")
+
+    try:
+        result = account_service.deposit(account_id, amount)
+        return jsonify(result)
+    except ValueError as e:
+        return _bad_request(str(e))
+    except (LookupError, InvalidId):
+        return _not_found(f"Account {account_id} not found.")
+    except Exception as e:
+        return _server_error(str(e))
 
 
-# ── GET /api/accounts/{id}  –  Get account details ───────────
-@router.get(
-    "/{account_id}",
-    response_model=AccountResponse,
-    summary="Get account details by ID",
-)
-def get_account(account_id: int):
-    return account_service.get_account(account_id)
+# ── POST /api/accounts/<id>/withdraw  –  Withdraw money ──────
+@account_bp.post("/<account_id>/withdraw")
+def withdraw(account_id: str):
+    body   = request.get_json(silent=True) or {}
+    amount = body.get("amount")
+
+    try:
+        amount = float(amount)
+    except (TypeError, ValueError):
+        return _bad_request("amount must be a number.")
+
+    try:
+        result = account_service.withdraw(account_id, amount)
+        return jsonify(result)
+    except ValueError as e:
+        return _bad_request(str(e))
+    except ArithmeticError as e:
+        return _unprocessable(str(e))
+    except (LookupError, InvalidId):
+        return _not_found(f"Account {account_id} not found.")
+    except Exception as e:
+        return _server_error(str(e))
 
 
-# ── POST /api/accounts/{id}/deposit  –  Deposit money ────────
-@router.post(
-    "/{account_id}/deposit",
-    response_model=OperationResponse,
-    summary="Deposit money into an account",
-)
-def deposit(account_id: int, body: AmountRequest):
-    return account_service.deposit(account_id, body.amount)
-
-
-# ── POST /api/accounts/{id}/withdraw  –  Withdraw money ──────
-@router.post(
-    "/{account_id}/withdraw",
-    response_model=OperationResponse,
-    summary="Withdraw money from an account",
-)
-def withdraw(account_id: int, body: AmountRequest):
-    return account_service.withdraw(account_id, body.amount)
-
-
-# ── PUT /api/accounts/{id}  –  Update account type ───────────
-@router.put(
-    "/{account_id}",
-    response_model=AccountResponse,
-    summary="Update account type",
-)
-def update_account(account_id: int, body: UpdateAccountRequest):
-    return account_service.update_account(account_id, body.account_type)
-
-
-# ── DELETE /api/accounts/{id}  –  Delete account ─────────────
-@router.delete(
-    "/{account_id}",
-    status_code=204,
-    summary="Delete an account",
-)
-def delete_account(account_id: int):
-    account_service.delete_account(account_id)
-    return None
-
-
-# ── GET /api/accounts/{id}/transactions  –  History ──────────
-@router.get(
-    "/{account_id}/transactions",
-    response_model=list[TransactionResponse],
-    summary="Get transaction history for an account",
-)
-def get_transactions(account_id: int):
-    return account_service.get_transactions(account_id)
+# ── GET /api/accounts/<id>/transactions  –  History ──────────
+@account_bp.get("/<account_id>/transactions")
+def get_transactions(account_id: str):
+    try:
+        result = account_service.get_transactions(account_id)
+        return jsonify(result)
+    except (LookupError, InvalidId):
+        return _not_found(f"Account {account_id} not found.")
+    except Exception as e:
+        return _server_error(str(e))

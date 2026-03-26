@@ -1,22 +1,14 @@
-# config/database.py  –  MySQL connection pool
-import mysql.connector
-from mysql.connector import pooling
+# config/database.py  –  MongoDB connection via PyMongo
+from pymongo import MongoClient
 from dotenv import load_dotenv
 import os
 
 load_dotenv()
 
-_pool = pooling.MySQLConnectionPool(
-    pool_name="bank_pool",
-    pool_size=10,
-    host=os.getenv("DB_HOST", "localhost"),
-    port=int(os.getenv("DB_PORT", 3306)),
-    user=os.getenv("DB_USER", "root"),
-    password=os.getenv("DB_PASSWORD", ""),
-    database=os.getenv("DB_NAME", "simple_bank"),
-)
+_client = MongoClient(os.getenv("MONGO_URI", "mongodb://localhost:27017"))
+_db     = _client[os.getenv("MONGO_DB", "simple_bank")]
 
-
-def get_connection():
-    """Return a connection from the pool."""
-    return _pool.get_connection()
+# Collections (equivalent to SQL tables)
+users_col        = _db["users"]
+accounts_col     = _db["accounts"]
+transactions_col = _db["transactions"]

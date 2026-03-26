@@ -1,83 +1,33 @@
 # repositories/account_repository.py
-from config.database import get_connection
+from datetime import datetime, timezone
+from bson import ObjectId
+from config.database import accounts_col
 
 
 class AccountRepository:
 
-    def find_by_id(self, account_id: int) -> dict | None:
-        conn = get_connection()
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM accounts WHERE account_id = %s", (account_id,))
-            return cursor.fetchone()
-        finally:
-            cursor.close()
-            conn.close()
+    def find_by_id(self, account_id: str) -> dict | None:
+        return accounts_col.find_one({"_id": ObjectId(account_id)})
 
-    def find_by_user_id(self, user_id: int) -> list[dict]:
-        conn = get_connection()
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT * FROM accounts WHERE user_id = %s", (user_id,))
-            return cursor.fetchall()
-        finally:
-            cursor.close()
-            conn.close()
+    def find_by_user_id(self, user_id: str) -> list[dict]:
+        return list(accounts_col.find({"user_id": ObjectId(user_id)}))
 
-    def create(self, user_id: int, account_type: str) -> dict:
-        conn = get_connection()
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute(
-                "INSERT INTO accounts (user_id, account_type) VALUES (%s, %s)",
-                (user_id, account_type),
-            )
-            conn.commit()
-            return self.find_by_id(cursor.lastrowid)
-        finally:
-            cursor.close()
-            conn.close()
+    def create(self, user_id: str, account_type: str) -> dict:
+        doc = {
+            "user_id":      ObjectId(user_id),
+            "balance":      0.0,
+            "account_type": account_type,
+            "created_at":   datetime.now(timezone.utc),
+        }
+        result = accounts_col.insert_one(doc)
+        return self.find_by_id(str(result.inserted_id))
 
-    def update_balance(self, account_id: int, new_balance: float) -> dict:
-        conn = get_connection()
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute(
-                "UPDATE accounts SET balance = %s WHERE account_id = %s",
-                (new_balance, account_id),
-            )
-            conn.commit()
-            return self.find_by_id(account_id)
-        finally:
-            cursor.close()
-            conn.close()
-
-    def update_account_type(self, account_id: int, new_account_type: str) -> dict:
-        """Update the account type"""
-        conn = get_connection()
-        try:
-            cursor = conn.cursor(dictionary=True)
-            cursor.execute(
-                "UPDATE accounts SET account_type = %s WHERE account_id = %s",
-                (new_account_type, account_id),
-            )
-            conn.commit()
-            return self.find_by_id(account_id)
-        finally:
-            cursor.close()
-            conn.close()
-
-    def delete(self, account_id: int) -> bool:
-        """Delete an account"""
-        conn = get_connection()
-        try:
-            cursor = conn.cursor()
-            cursor.execute("DELETE FROM accounts WHERE account_id = %s", (account_id,))
-            conn.commit()
-            return cursor.rowcount > 0
-        finally:
-            cursor.close()
-            conn.close()
+    def update_balance(self, account_id: str, new_balance: float) -> dict:
+        accounts_col.update_one(
+            {"_id": ObjectId(account_id)},
+            {"$set": {"balance": new_balance}},
+        )
+        return self.find_by_id(account_id)
 
 
 account_repository = AccountRepository()
