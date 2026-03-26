@@ -13,6 +13,7 @@
   ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/backend/main.py" },
-    { "src": "/(.*)",     "dest": "/frontend/build/index.html" }
+    { "handle": "filesystem" },
+    { "src": "/(.*)",     "dest": "/index.html" }
   ]
 }
